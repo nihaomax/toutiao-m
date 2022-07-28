@@ -1,5 +1,11 @@
 <template>
-  <div>黑马头条</div>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
-<style lang="less"></style>
+<script>
+export default {}
+</script>
+
+<style></style>
