@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout">
     <router-view></router-view>
     <!-- 底部导航 -->
     <van-tabbar route>
@@ -49,6 +49,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.layout {
+  height: 100%;
+}
 :deep(.van-tabbar-item__icon) {
   display: flex;
   flex-direction: column;

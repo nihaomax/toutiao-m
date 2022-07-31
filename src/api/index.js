@@ -4,3 +4,5 @@
 // export {default as getUser} from './user'
 
 export * from './user'
+
+export * from './channel'
