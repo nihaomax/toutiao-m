@@ -94,7 +94,7 @@ export default {
         this.$store.commit('SET_TOKEN', token)
 
         // 登录成功之后跳转到profile 我的页面
-        this.$router.push('/profile')
+        this.$router.push('/my')
 
         this.$toast.success('登录成功')
       } catch (e) {
