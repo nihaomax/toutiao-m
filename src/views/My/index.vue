@@ -7,8 +7,8 @@
         <!-- 头像 -->
         <div class="userimg">
           <div class="left">
-            <div class="img"></div>
-            <span>黑马程序员</span>
+            <div class="img"><img :src="infoList.photo" alt="" /></div>
+            <span>{{ infoList.name }}</span>
           </div>
           <div class="right">
             <van-button type="primary">编辑资料</van-button>
@@ -18,20 +18,20 @@
         <div class="guanzhu">
           <van-row>
             <van-col span="6">
-              <div>5029</div>
+              <div>{{ infoList.art_count }}</div>
               <span>头条</span>
             </van-col>
             <van-col span="6">
-              <div>33</div>
-              <span>头条</span>
+              <div>{{ infoList.fans_count }}</div>
+              <span>粉丝</span>
             </van-col>
             <van-col span="6">
-              <div>0</div>
-              <span>头条</span>
+              <div>{{ infoList.follow_count }}</div>
+              <span>关注</span>
             </van-col>
             <van-col span="6">
-              <div>0</div>
-              <span>头条</span>
+              <div>{{ infoList.like_count }}</div>
+              <span>获赞</span>
             </van-col>
           </van-row>
         </div>
@@ -77,12 +77,21 @@
 </template>
 
 <script>
+import { userInfoApi } from '@/api'
 export default {
+  data() {
+    return {
+      infoList: []
+    }
+  },
   computed: {
     isLogin() {
       // !!转成布尔值
       return !!this.$store.state.tokenObj.token
     }
+  },
+  created() {
+    this.getUserInfo()
   },
   methods: {
     logout() {
@@ -90,6 +99,17 @@ export default {
     },
     btnlogin() {
       this.$router.push('/login')
+    },
+    async getUserInfo() {
+      try {
+        const {
+          data: { data }
+        } = await userInfoApi()
+        this.infoList = data
+        // console.log(data)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
@@ -121,7 +141,13 @@ export default {
         width: 132px;
         height: 132px;
         border-radius: 50%;
+        border: 1px solid #fff;
+        margin-left: 32px;
         background-color: #fff;
+        overflow: hidden;
+        img {
+          width: 100%;
+        }
       }
       span {
         margin-left: 22px;

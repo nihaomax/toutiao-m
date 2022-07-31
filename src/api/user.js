@@ -33,3 +33,10 @@ export const getCodeApi = (mobile) => {
     url: `/v1_0/sms/codes/${mobile}`
   })
 }
+
+// 获取用户自己的资料
+export const userInfoApi = () => {
+  return request({
+    url: '/v1_0/user'
+  })
+}
