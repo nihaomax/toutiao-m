@@ -22,13 +22,26 @@
       closeable
       close-icon-position="top-left"
     >
-      <channel-popup></channel-popup>
+      <!-- $event 模板 原生事件：事件对象  -->
+      <!-- 自定义事件当中：子组件传递过来的第一个参数 -->
+      <channel-popup
+        :myChannels="myChannels"
+        @change-active="active = $event"
+        @del-channel="delChannel"
+        @add-channel="addChannel"
+      ></channel-popup>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { getMyChannel as getMyChannelApi } from '@/api'
+import {
+  getMyChannel as getMyChannelApi,
+  delMyChannelApi,
+  addMyChannelApi,
+  setMyChannelsToLocal,
+  getMyChannelsByLocal
+} from '@/api'
 import ArticleList from './components/ArticleList.vue'
 import ChannelPopup from './components/ChannelPopup.vue'
 export default {
@@ -41,10 +54,30 @@ export default {
     }
   },
   created() {
-    this.getMyChannel()
+    this.initMyChannels()
   },
   methods: {
+    // 初始化myChannels数据
+    initMyChannels() {
+      // 如果用户登录了
+      if (this.isLogin) {
+        // 发送请求获取myChannels数据
+        this.getMyChannel()
+      } else {
+        // 如果用户没有登陆
+        const myChannels = getMyChannelsByLocal()
+        // 本地存储有myChannels数据，从本地拿myChannels
+        if (myChannels) {
+          this.myChannels = myChannels
+        } else {
+          // 本地存储没有myChannels数据，获取默认的myChannels
+          this.getMyChannel()
+        }
+      }
+    },
     // 获取频道导航列表
+    // 如果用户登录了，获取的是用户自己的myChannels
+    // 如果没有登录，获取的是默认的myChannels
     async getMyChannel() {
       try {
         const { data } = await getMyChannelApi()
@@ -54,6 +87,58 @@ export default {
         console.dir(error)
         this.$toast.fail('获取频道失败，请重新刷新')
       }
+    },
+    // 删除频道
+    async delChannel(id) {
+      this.$toast.loading({
+        message: '正在删除频道...',
+        forbidClick: true
+      })
+      try {
+        const newChannels = this.myChannels.filter((item) => item.id !== id)
+        // 如果是用户是登录状态 就执行if里面的  如果未登录执行else 在本地存储数据
+        if (this.isLogin) {
+          // 删除服务器的数据
+          await delMyChannelApi(id)
+        } else {
+          setMyChannelsToLocal(newChannels)
+        }
+
+        // 删除页面上的数据
+        this.myChannels = newChannels
+        this.$toast.success('频道删除成功')
+      } catch {
+        this.$toast.fail('频道删除失败')
+      }
+    },
+    // 添加频道
+    async addChannel(channel) {
+      this.$toast.loading({
+        message: '正在添加频道...',
+        forbidClick: true
+      })
+      try {
+        // 如果用户是登录状态，那就直接执行if里面的语句， 如果未登录 将数据存储到本地内
+        if (this.isLogin) {
+          // console.log('被触发了', channel)
+          await addMyChannelApi(channel.id, this.myChannels.length)
+        } else {
+          // es6新语法 前面是旧的数据 后面是新添加进去的数据
+          setMyChannelsToLocal([...this.myChannels, channel])
+        }
+
+        // 把点击的那个对象加入到myChannels 渲染到页面上去
+        this.myChannels.push(channel)
+        this.$toast.success('频道添加成功')
+      } catch {
+        this.$toast.fail('频道添加失败')
+      }
+    }
+  },
+  computed: {
+    // 用于标识是否登录
+    isLogin() {
+      return !!this.$store.state.tokenObj.token
     }
   },
   components: {

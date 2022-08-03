@@ -58,7 +58,7 @@ export default {
         this.articles = data.data.results
         // 保存下一页的时间戳
         this.pre_timestamp = data.data.pre_timestamp
-        console.log(data)
+        // console.log(data)
       } catch (e) {
         // 提示刷新重新获取
         this.$toast.fail('请刷新重新获取文章')

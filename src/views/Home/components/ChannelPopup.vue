@@ -12,13 +12,15 @@
     </van-cell>
     <van-grid gutter="0.2rem">
       <van-grid-item
-        class="mychannel-item"
-        v-for="value in 6"
-        :key="value"
-        text="文字"
+        v-for="(item, index) in myChannels"
+        :key="item.id"
+        :text="item.name"
+        :class="['mychannel-item', { active: item.name === '推荐' }]"
+        @click="changeActive(index, item)"
       >
         <template #icon>
-          <van-icon name="cross" v-show="isEdit" />
+          <!-- 当内容不是推荐的时候显示叉号 -->
+          <van-icon name="cross" v-show="isEdit && item.name !== '推荐'" />
         </template>
       </van-grid-item>
     </van-grid>
@@ -28,25 +30,86 @@
       <van-grid-item
         class="recommend-item"
         icon="plus"
-        v-for="value in 6"
-        :key="value"
-        text="文字"
+        v-for="item in recommendChannels"
+        :key="item.id"
+        :text="item.name"
+        @click="$emit('add-channel', item)"
       />
     </van-grid>
   </div>
 </template>
 
 <script>
+import { getAllChannelApi } from '@/api'
+
 export default {
+  props: {
+    myChannels: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      isEdit: false
+      isEdit: false,
+      allChannels: []
+    }
+  },
+  created() {
+    this.getAllChannel()
+  },
+  methods: {
+    async getAllChannel() {
+      try {
+        const { data } = await getAllChannelApi()
+        this.allChannels = data.data.channels
+        console.log(data)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    // 改变tab的active
+    //  this.$parent:当前组件实例的亲身父亲实例
+    changeActive(index, item) {
+      // 处于编辑状态
+      if (this.isEdit) {
+        if (item.name === '推荐') return
+        // 删除我的频道
+        this.$emit('del-channel', item.id)
+      } else {
+        // 1.关闭弹窗
+        this.$parent.$parent.show = false
+        // 2.切换tab active
+        this.$emit('change-active', index)
+      }
+    }
+  },
+  // filter 返回的值：新数组
+  // return true 将遍历到的哪一项加入到新数组里面
+  // find 从数组当中查找满足条件的元素
+  //  返回值 如果查找到返回元素 如果没有查找找返回undifined
+  computed: {
+    // const results = !!this.myChannels.find(( mitem) => aitem.id === mitem.id)
+    // if (results) {
+    //   return false
+    // } else {
+    //   return true
+    // }
+    recommendChannels() {
+      return this.allChannels.filter(
+        (aitem) => !this.myChannels.find((mitem) => aitem.id === mitem.id)
+      )
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.active {
+  :deep(.van-grid-item__text) {
+    color: red;
+  }
+}
 .channel {
   padding-top: 1.33333rem;
   .edit-btn {
