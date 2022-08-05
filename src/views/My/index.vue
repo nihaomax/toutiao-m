@@ -95,7 +95,14 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.commit('SET_TOKEN', {})
+      this.$dialog
+        .confirm({
+          title: '黑马头条',
+          message: '是否确认退出该账号'
+        })
+        .then(() => {
+          this.$store.commit('SET_TOKEN', {})
+        })
     },
     btnlogin() {
       this.$router.push('/login')
