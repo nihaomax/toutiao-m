@@ -11,7 +11,9 @@
             <span>{{ infoList.name }}</span>
           </div>
           <div class="right">
-            <van-button type="primary">编辑资料</van-button>
+            <van-button type="primary" @click="$router.push('/user')"
+              >编辑资料</van-button
+            >
           </div>
         </div>
         <!-- 消息栏 -->
@@ -102,6 +104,9 @@ export default {
         })
         .then(() => {
           this.$store.commit('SET_TOKEN', {})
+        })
+        .catch(() => {
+          // on cancel
         })
     },
     btnlogin() {

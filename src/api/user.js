@@ -40,3 +40,13 @@ export const userInfoApi = () => {
     url: '/v1_0/user'
   })
 }
+
+/**
+ * 获取个人用户信息
+ * @returns
+ */
+export const getUserInfoApi = () => {
+  return request({
+    url: '/v1_0/user/profile'
+  })
+}
