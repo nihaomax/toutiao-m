@@ -4,6 +4,7 @@
       v-for="(item, index) in highlightSuggestions"
       :key="index"
       icon="search"
+      @click="clickFn(index)"
     >
       <template #title>
         <span v-html="item"></span>
@@ -71,7 +72,12 @@ export default {
         // console.log(e)
         this.$toast.fail('获取搜索建议失败')
       }
-    }, 300)
+    }, 300),
+    clickFn(index) {
+      this.$parent.keywords = this.suggetions[index]
+      // console.log(data)
+      this.$parent.onSearch()
+    }
   },
   // 先有组件，才能监听keywords的变化
   watch: {

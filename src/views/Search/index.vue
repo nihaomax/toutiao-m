@@ -24,6 +24,7 @@
       :is="componentName"
       :keywords="keywords"
       :historyList="historyList"
+      @searchFn="onSearch"
     ></component>
   </div>
 </template>
@@ -32,7 +33,7 @@
 import SearchSuggestion from './components/SearchSuggestion.vue'
 import SearchResult from './components/SearchResult.vue'
 import SearchHistory from './components/SearchHistory.vue'
-import storage from '@/utils/storage'
+
 export default {
   name: 'Search',
   data() {
@@ -45,17 +46,18 @@ export default {
   },
   methods: {
     onSearch() {
-      console.log(this.keywords)
-      // 如果keywords不为空的时候那么就将搜索历史推到历史记录的数组里面
-      // if (this.keywords !== '') {
-      //   this.historyList.unshift(this.keywords)
-      //   // console.log(this.historyList)
-      // }
+      // 解决敲击空格渲染到历史列表
+      if (this.keywords.trim().length === 0) {
+        return
+      }
       if (this.historyList.indexOf(this.keywords) === -1) {
+        // console.log(this.keywords)
+        // 如果keywords不为空的时候那么就将搜索历史推到历史记录的数组里面
         this.historyList.unshift(this.keywords)
         // console.log(this.historyList)
         this.$store.commit('SET_HISTORY', this.historyList)
       }
+
       // console.log(this.historyList)
       // 用户搜索了，把isShowSearchResult改成true显示搜索结果
       this.isShowSearchResult = true

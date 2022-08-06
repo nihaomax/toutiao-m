@@ -2,7 +2,7 @@
   <div class="update-avator">
     <img :src="photo" alt="" class="img" ref="image" />
     <footer>
-      <span>取消</span>
+      <span @click="$parent.$parent.isShowAvator = false">取消</span>
       <span @click="uploadAvator">完成</span>
     </footer>
   </div>

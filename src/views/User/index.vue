@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="index">
     <!-- 头部导航 -->
     <van-nav-bar title="个人信息" left-arrow @click-left="$router.back()" />
     <!-- 用户信息 -->
     <!-- 头像部分 -->
-    <van-cell title="单元格" is-link @click="$refs.file.click()">
+    <van-cell title="头像" is-link @click="$refs.file.click()">
       <van-image
         round
         fit="cover"
@@ -18,11 +18,32 @@
       <input
         type="file"
         hidden
-        accept=".png,.jfif"
+        accept=".png,.jfif.jpg"
         ref="file"
         @change="selectPhoto"
       />
     </van-cell>
+    <!-- 昵称部分 -->
+    <van-cell
+      title="昵称"
+      is-link
+      :value="userInfo.name"
+      @click="isShowNickName = true"
+    />
+    <!-- 性别 -->
+    <van-cell
+      title="性别"
+      is-link
+      :value="userInfo.gender === 1 ? '女' : '男'"
+      @click="isShowSex = true"
+    />
+    <!-- 生日 -->
+    <van-cell
+      title="生日"
+      is-link
+      :value="userInfo.birthday"
+      @click="isShowBirthday = true"
+    />
     <!-- 用户头像弹出层 -->
     <van-popup
       class="avator-popup"
@@ -38,12 +59,46 @@
         @update-avator="userInfo.photo = $event"
       ></update-avator>
     </van-popup>
+    <!-- 昵称弹出层 -->
+    <van-popup
+      v-model="isShowNickName"
+      position="bottom"
+      :style="{ height: '100%' }"
+    >
+      <update-nick-name
+        :userInfoName="userInfo.name"
+        v-if="isShowNickName"
+        @change-Name="userInfo.name = $event"
+      ></update-nick-name>
+    </van-popup>
+    <!-- 性别弹出层 -->
+    <van-popup v-model="isShowSex" position="bottom" :style="{ height: '40%' }">
+      <update-sex
+        :userInfoSex="userInfo.gender"
+        v-if="isShowSex"
+        @change-sex="userInfo.gender = $event"
+      ></update-sex>
+    </van-popup>
+    <!-- 生日弹出层 -->
+    <van-popup
+      v-model="isShowBirthday"
+      position="bottom"
+      :style="{ height: '40%' }"
+    >
+      <update-birthday
+        :userInfoBirthday="userInfo.birthday"
+        @change-birthday="userInfo.birthday = $event"
+      ></update-birthday>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserInfoApi } from '@/api'
 import UpdateAvator from './components/UpdateAvator.vue'
+import UpdateNickName from './components/UpdateNickName.vue'
+import UpdateSex from './components/UpdateSex.vue'
+import UpdateBirthday from './components/UpdateBirthday.vue'
 import { resolveToBase64 } from '@/utils'
 export default {
   name: 'User',
@@ -51,6 +106,9 @@ export default {
     return {
       userInfo: {},
       isShowAvator: false,
+      isShowNickName: false,
+      isShowSex: false,
+      isShowBirthday: false,
       photo: ''
     }
   },
@@ -62,7 +120,7 @@ export default {
       try {
         const { data } = await getUserInfoApi()
         this.userInfo = data.data
-        // console.log(data)
+        console.log(data)
       } catch (error) {
         this.$toast.fail('获取用户信息失败，请刷新')
       }
@@ -104,22 +162,27 @@ export default {
     }
   },
   components: {
-    UpdateAvator
+    UpdateAvator,
+    UpdateNickName,
+    UpdateSex,
+    UpdateBirthday
   }
 }
 </script>
 
 <style lang="less" scoped>
-:deep(.van-nav-bar) {
-  background-color: #3296fa;
-  .van-nav-bar__title {
-    color: #fff;
+.index {
+  :deep(.van-nav-bar) {
+    background-color: #3296fa;
+    .van-nav-bar__title {
+      color: #fff;
+    }
+    .van-icon {
+      color: #fff;
+    }
   }
-  .van-icon {
-    color: #fff;
+  .avator-popup {
+    background-color: #000;
   }
-}
-.avator-popup {
-  background-color: #000;
 }
 </style>

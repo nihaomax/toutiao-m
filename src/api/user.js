@@ -71,3 +71,13 @@ export const uploadAvator = (file) => {
     data: fm
   })
 }
+
+// 编辑个人资料
+
+export const editUserProfileApi = (data) => {
+  return request({
+    url: '/v1_0/user/profile',
+    method: 'PATCH',
+    data
+  })
+}
