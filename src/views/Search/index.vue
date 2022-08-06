@@ -19,7 +19,12 @@
     <search-result></search-result>
     <search-history></search-history> -->
     <!-- is指定动态组件的名字，字符串，并且名字应该从components里面取 -->
-    <component :is="componentName" :keywords="keywords"></component>
+
+    <component
+      :is="componentName"
+      :keywords="keywords"
+      :historyList="historyList"
+    ></component>
   </div>
 </template>
 
@@ -27,18 +32,31 @@
 import SearchSuggestion from './components/SearchSuggestion.vue'
 import SearchResult from './components/SearchResult.vue'
 import SearchHistory from './components/SearchHistory.vue'
+import storage from '@/utils/storage'
 export default {
   name: 'Search',
   data() {
     return {
       keywords: '',
       // 用于记录用户是否搜索了
-      isShowSearchResult: false
+      isShowSearchResult: false,
+      historyList: this.$store.state.history
     }
   },
   methods: {
     onSearch() {
-      // console.log('输出')
+      console.log(this.keywords)
+      // 如果keywords不为空的时候那么就将搜索历史推到历史记录的数组里面
+      // if (this.keywords !== '') {
+      //   this.historyList.unshift(this.keywords)
+      //   // console.log(this.historyList)
+      // }
+      if (this.historyList.indexOf(this.keywords) === -1) {
+        this.historyList.unshift(this.keywords)
+        // console.log(this.historyList)
+        this.$store.commit('SET_HISTORY', this.historyList)
+      }
+      // console.log(this.historyList)
       // 用户搜索了，把isShowSearchResult改成true显示搜索结果
       this.isShowSearchResult = true
     },
@@ -81,5 +99,11 @@ export default {
     color: #fff;
     background-color: transparent;
   }
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 66;
 }
 </style>

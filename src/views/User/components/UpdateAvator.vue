@@ -1,15 +1,66 @@
 <template>
   <div class="update-avator">
-    <img src="../../../assets/images/banner.png" alt="" class="img" />
+    <img :src="photo" alt="" class="img" ref="image" />
     <footer>
       <span>取消</span>
-      <span>完成</span>
+      <span @click="uploadAvator">完成</span>
     </footer>
   </div>
 </template>
 
 <script>
-export default {}
+import 'cropperjs/dist/cropper.css'
+import Cropper from 'cropperjs'
+import { uploadAvator } from '@/api'
+export default {
+  props: {
+    photo: {
+      type: String,
+      required: true
+    }
+  },
+  mounted() {
+    // mounted 只能执行一次，所以要在index.vue里面的update-avator标签内加上v-if 让他关闭后再关闭能执行mounted 然后调用 this.init()
+    this.init()
+  },
+  methods: {
+    init() {
+      this.myCropper = new Cropper(this.$refs.image, {
+        viewMode: 1,
+        dragMode: 'none',
+        initialAspectRatio: 1,
+        aspectRatio: 1,
+        preview: '.before',
+        background: false,
+        autoCropArea: 0.6,
+        zoomOnWheel: false
+      })
+    },
+    // 上传头像
+    uploadAvator() {
+      // 1.获取裁剪后的图像的file对象
+      this.myCropper.getCroppedCanvas().toBlob(async (blob) => {
+        this.$toast.loading({
+          message: '图片正在上传...',
+          forbidClick: true
+        })
+        try {
+          // 2.发起请求
+          const { data } = await uploadAvator(blob)
+          // console.log(data)
+          // 3.更改父组件里的头像
+          this.$emit('update-avator', data.data.photo)
+          // 4.关闭弹层
+          this.$parent.$parent.isShowAvator = false
+          // 5.提示头像上传成功
+          this.$toast.success('图片上传成功')
+        } catch {
+          this.$toast.fail('图片上传失败')
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style scoped lang="less">

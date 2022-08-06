@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import storage from '@/utils/storage'
 import { setToken, getToken } from '@/utils/auth'
+import storage from '@/utils/storage'
 
 Vue.use(Vuex)
 // vuex
@@ -16,7 +17,8 @@ export default new Vuex.Store({
   state: {
     // tokenObj: JSON.parse(localStorage.getItem('TOKEN')) || {}
     // tokenObj: storage.get('TOKEN') || {}
-    tokenObj: getToken() || {}
+    tokenObj: getToken() || {},
+    history: storage.get('HISTORY') || []
   },
   getters: {},
 
@@ -28,6 +30,11 @@ export default new Vuex.Store({
       // localStorage.setItem('TOKEN', JSON.stringify(payload))
       // storage.set('TOKEN', payload)
       setToken(payload)
+    },
+    SET_HISTORY(state, payload) {
+      state.history = payload
+
+      storage.set('HISTORY', payload)
     }
   },
   actions: {},

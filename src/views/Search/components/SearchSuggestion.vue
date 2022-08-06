@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="sug">
     <van-cell
       v-for="(item, index) in highlightSuggestions"
       :key="index"
@@ -63,7 +63,7 @@ export default {
     getSearchSuggetions: debounce(async function () {
       try {
         const { data } = await getSearchSuggetionsApi(this.keywords)
-        console.log(data)
+        // console.log(data)
         // Boolean()是window的方法 如果传进去的是真值则返回true，如果传的是假值返回的是false
         // this.suggetions = data.data.options.filter((str) => Boolean(str))
         this.suggetions = data.data.options.filter(Boolean)
@@ -101,4 +101,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="less" scoped>
+.sug {
+  padding-top: 108px;
+}
+</style>
