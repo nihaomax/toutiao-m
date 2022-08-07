@@ -81,3 +81,17 @@ export const editUserProfileApi = (data) => {
     data
   })
 }
+
+// 关注用户
+/**
+ *
+ * @param {*} target 关注用户的id
+ * @returns
+ */
+export const followUsersApi = (target) => {
+  return request({
+    url: '/v1_0/user/followings',
+    method: 'POST',
+    data: target
+  })
+}

@@ -16,3 +16,14 @@ export const getArticleApi = (channelId, timestamp) => {
     }
   })
 }
+
+/**
+ * 获取文章详情
+ * @param {*} articleId
+ * @returns
+ */
+export const getArticleListApi = (articleId) => {
+  return request({
+    url: `/v1_0/articles/${articleId}`
+  })
+}

@@ -19,7 +19,9 @@
           v-for="item in articles"
           :key="item.art_id"
           :articleInfo="item"
-          @click.native="$router.push('/article')"
+          @click.native="
+            $router.push({ path: '/article', query: { artId: item.art_id } })
+          "
         ></article-item>
       </van-list>
     </van-pull-refresh>
